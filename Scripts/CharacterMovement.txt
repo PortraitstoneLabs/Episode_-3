@@ -1,0 +1,67 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CharacterMovement : MonoBehaviour
+{
+
+    private Rigidbody _rigidbody;
+
+    [SerializeField] private float _moveSpeed = 2f;
+    [SerializeField] private float _turnSpeed = 30f;
+    [SerializeField] private float _turnSpeedMouse = 3f;
+    [SerializeField] private float _jumpForce = 300f;
+    private bool _shouldJump;
+    void Awake() => _rigidbody = GetComponent<Rigidbody>();
+    void Update()
+    {
+        {
+            var horizontal = Input.GetAxis("Mouse X");
+            transform.Rotate(horizontal * _turnSpeedMouse * Vector3.up, Space.World);
+        }
+        {
+            if (_shouldJump == false)
+                _shouldJump = Input.GetKeyDown(KeyCode.Space);
+        }
+        if (Input.GetKey(KeyCode.Q))
+            transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.down);
+
+        if (Input.GetKey(KeyCode.E))
+            transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.up);
+
+        if (Input.GetKey(KeyCode.RightArrow) && transform.position.x < 5)
+            transform.position += Time.deltaTime * _moveSpeed * Vector3.right;
+
+        if (Input.GetKey(KeyCode.LeftArrow) && transform.position.x > -5)
+            transform.position += Time.deltaTime * _moveSpeed * Vector3.left;
+
+        if (Input.GetKey(KeyCode.UpArrow) && transform.position.z < 5)
+            transform.position += Time.deltaTime * _moveSpeed * Vector3.forward;
+
+        if (Input.GetKey(KeyCode.DownArrow) && transform.position.z > -1)
+            transform.position += Time.deltaTime * _moveSpeed * Vector3.back;
+
+        if (Input.GetKey(KeyCode.D) && transform.position.x < 5)
+            transform.position += Time.deltaTime * _moveSpeed * transform.right;
+
+        if (Input.GetKey(KeyCode.A) && transform.position.x > -5)
+            transform.position += Time.deltaTime * _moveSpeed * -transform.right;
+
+        if (Input.GetKey(KeyCode.W) && transform.position.z < 5)
+            transform.position += Time.deltaTime * _moveSpeed * transform.forward;
+
+        if (Input.GetKey(KeyCode.S) && transform.position.z > -1)
+            transform.position += Time.deltaTime * _moveSpeed * -transform.forward;
+
+        if (Input.GetKey(KeyCode.Space))
+            transform.position = new Vector3(0, 0.5f, 0);
+    }
+    private void FixedUpdate()
+    {
+        if (_shouldJump)
+        {
+            _rigidbody.AddForce(_jumpForce * Vector3.up);
+            _shouldJump = false;
+        }
+    }
+}
